@@ -1,0 +1,22 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.state/
+reports/*.json
+reports/*.md
+*.egg-info/
+build/
+dist/
+src-tauri/target/
+src-tauri/gen/
+.env
+.env.*
+*.pem
+*.key
+oss-registry.json
+build/
+src-tauri/binaries/*.exe
+
+# Local orchestration / execution evidence (developer-environment specific)
+docs/FOSSIGHT_DISTRIBUTION_EXECUTION_STATUS.md
+docs/FOSSIGHT_THIRD_PARTY_DISTRIBUTION_ORCHESTRATOR_PLAN_20260912.md

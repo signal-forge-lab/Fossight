@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fossight — UI Design Sheet</title>
+  <style>
+    :root {
+      --bg: #edf0f6;
+      --surface: #ffffff;
+      --surface-2: #f7f8fb;
+      --surface-3: #eef1f7;
+      --ink: #232839;
+      --muted: #6f788b;
+      --border: #d7ddeb;
+      --border-strong: #b9c3d6;
+      --accent: #4f63e0;
+      --accent-soft: #e9edff;
+      --success: #23845c;
+      --success-soft: #e8f6ef;
+      --warning: #9a6a12;
+      --warning-soft: #fff3d6;
+      --danger: #bd3b4b;
+      --danger-soft: #fdebed;
+      --shadow: 0 22px 60px rgba(45, 55, 88, .11);
+      --r-sm: 8px;
+      --r-md: 12px;
+      --r-lg: 16px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(79, 99, 224, .025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79, 99, 224, .025) 1px, transparent 1px),
+        var(--bg);
+      background-size: 26px 26px;
+      font: 14px/1.5 "Segoe UI", "Yu Gothic UI", system-ui, -apple-system, sans-serif;
+    }
+    button, input, select { font: inherit; color: inherit; }
+    .page { max-width: 1600px; margin: 0 auto; padding: 36px 32px 60px; }
+    .masthead { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
+    .eyebrow { margin: 0 0 4px; color: var(--accent); font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(30px, 4vw, 50px); line-height: 1; letter-spacing: -.035em; }
+    .lead { margin: 10px 0 0; max-width: 760px; color: var(--muted); }
+    .stamp { padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--r-md); background: rgba(255,255,255,.72); color: var(--muted); font-size: 12px; font-weight: 700; }
+
+    .meta-strip { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 14px; }
+    .meta { min-height: 58px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: rgba(255,255,255,.82); }
+    .meta small { display: block; color: var(--muted); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+    .meta strong { display: block; margin-top: 2px; font-size: 13px; }
+
+    .window-frame {
+      border: 1px solid #c8d0df;
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      overflow: clip;
+      aspect-ratio: 16 / 10;
+      min-height: 650px;
+      display: grid;
+      grid-template-rows: 42px 54px 1fr 34px;
+    }
+    .titlebar { padding: 0 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: #fbfcfe; }
+    .title-left { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 800; }
+    .app-mark { width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center; color: #fff; background: var(--accent); font-size: 11px; }
+    .window-controls { display: flex; gap: 6px; }
+    .window-controls span { width: 11px; height: 11px; border-radius: 50%; background: #d6dbe5; }
+
+    .toolbar { padding: 0 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); background: #fff; }
+    .icon-btn { width: 32px; height: 32px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--muted); }
+    .icon-btn.filled { border-color: var(--border); background: var(--surface-2); }
+    .search { height: 34px; flex: 1; max-width: 430px; padding: 0 12px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface-2); color: var(--muted); display: flex; align-items: center; gap: 8px; }
+    .toolbar-spacer { flex: 1; }
+    .check-btn { height: 34px; padding: 0 13px; border: 1px solid var(--accent); border-radius: 8px; color: #fff; background: var(--accent); font-weight: 800; }
+
+    .workspace { min-height: 0; display: grid; grid-template-columns: 220px 1fr; }
+    .sidebar { min-width: 0; border-right: 1px solid var(--border); background: var(--surface-2); padding: 13px 10px; }
+    .side-label { padding: 7px 10px 5px; color: #8992a4; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .nav-item { min-height: 38px; padding: 0 10px; display: flex; align-items: center; gap: 9px; border-radius: 9px; color: #596276; font-weight: 700; }
+    .nav-item.active { color: var(--accent); background: var(--accent-soft); }
+    .nav-icon { width: 18px; text-align: center; font-size: 15px; }
+    .nav-count { margin-left: auto; min-width: 22px; height: 20px; padding: 0 6px; border-radius: 999px; display: grid; place-items: center; background: #fff; color: var(--muted); font-size: 10px; }
+    .side-rule { height: 1px; background: var(--border); margin: 12px 6px; }
+
+    .content { min-width: 0; min-height: 0; overflow: hidden; background: #fff; display: grid; grid-template-rows: auto auto 1fr; }
+    .content-head { padding: 20px 22px 14px; display: flex; align-items: start; justify-content: space-between; gap: 18px; }
+    .content-head h2 { margin: 0 0 4px; font-size: 22px; letter-spacing: -.02em; }
+    .content-head p { margin: 0; color: var(--muted); font-size: 12px; }
+    .head-actions { display: flex; gap: 7px; }
+    .btn { height: 34px; padding: 0 11px; border: 1px solid var(--border-strong); border-radius: 8px; background: #fff; font-weight: 700; }
+    .btn.primary { border-color: var(--accent); color: #fff; background: var(--accent); }
+
+    .summary { padding: 0 22px 14px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; }
+    .metric { padding: 12px 13px; border: 1px solid var(--border); border-radius: 11px; background: var(--surface-2); }
+    .metric strong { display: block; font-size: 24px; line-height: 1; letter-spacing: -.03em; }
+    .metric span { display: block; margin-top: 5px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+
+    .registry { min-height: 0; margin: 0 22px 20px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: grid; grid-template-rows: 36px 1fr; }
+    .registry-head, .repo-row { display: grid; grid-template-columns: 44px minmax(210px,1.35fr) 120px 120px minmax(145px,.8fr) 110px 42px; align-items: center; column-gap: 9px; }
+    .registry-head { padding: 0 11px; background: var(--surface-2); color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+    .repo-list { min-height: 0; overflow: hidden; }
+    .repo-row { min-height: 52px; padding: 6px 11px; border-bottom: 1px solid #e7eaf0; background: #fff; }
+    .repo-row.selected { background: #f4f5ff; box-shadow: inset 3px 0 var(--accent); }
+    .toggle { width: 34px; height: 20px; padding: 2px; border-radius: 999px; display: flex; align-items: center; background: #ccd2de; }
+    .toggle::after { content: ""; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+    .toggle.on { justify-content: flex-end; background: var(--accent); }
+    .repo-name { font-size: 12px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .repo-sub { margin-top: 2px; color: var(--muted); font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .type, .track { font-size: 11px; color: #596276; }
+    .version { font: 11px ui-monospace, SFMono-Regular, Consolas, monospace; color: #596276; }
+    .status { justify-self: start; min-height: 24px; padding: 2px 8px; border-radius: 999px; display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 800; }
+    .status::before { content:""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .status.ok { color: var(--success); background: var(--success-soft); }
+    .status.update { color: var(--warning); background: var(--warning-soft); }
+    .status.off { color: #7d8799; background: #edf0f4; }
+    .more { justify-self: end; width: 28px; height: 28px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); }
+
+    .footer { padding: 0 14px; display: flex; align-items: center; gap: 18px; border-top: 1px solid var(--border); background: #fbfcfe; color: var(--muted); font-size: 10px; }
+    .footer strong { color: #556075; }
+    .footer .push { margin-left: auto; }
+
+    .annotation-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 14px; margin-top: 14px; }
+    .annotation { border: 1px solid var(--border); border-radius: 12px; background: rgba(255,255,255,.82); overflow: clip; }
+    .annotation h3 { margin: 0; padding: 11px 13px; border-bottom: 1px solid var(--border); background: var(--surface-2); font-size: 12px; }
+    .annotation-body { padding: 12px 13px; }
+    .spec-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .spec-table th, .spec-table td { padding: 7px 8px; text-align: left; border-bottom: 1px solid #e7eaf0; }
+    .spec-table th { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; }
+    .spec-table tr:last-child td { border-bottom: 0; }
+    .flow { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; }
+    .flow-node { padding: 7px 9px; border: 1px solid var(--border); border-radius: 8px; background: #fff; font-size: 11px; font-weight: 700; }
+    .flow-arrow { color: #96a0b2; }
+    .note { margin-top: 10px; color: var(--muted); font-size: 11px; }
+
+    @media (max-width: 1100px) {
+      .page { padding: 24px 16px 44px; }
+      .meta-strip { grid-template-columns: repeat(3, 1fr); }
+      .window-frame { aspect-ratio: auto; min-height: 720px; }
+      .workspace { grid-template-columns: 180px 1fr; }
+      .registry-head, .repo-row { grid-template-columns: 40px minmax(190px,1fr) 100px 110px 110px 38px; }
+      .registry-head > :nth-child(5), .repo-row > :nth-child(5) { display: none; }
+      .annotation-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .masthead { align-items: start; flex-direction: column; }
+      .meta-strip { grid-template-columns: repeat(2, 1fr); }
+      .window-frame { min-height: 760px; grid-template-rows: 42px 50px 1fr 34px; }
+      .workspace { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .summary { grid-template-columns: repeat(2, 1fr); padding-inline: 12px; }
+      .content-head { padding-inline: 12px; }
+      .registry { margin-inline: 12px; }
+      .registry-head, .repo-row { grid-template-columns: 40px 1fr 100px 38px; }
+      .registry-head > :nth-child(3), .registry-head > :nth-child(4), .registry-head > :nth-child(5),
+      .repo-row > :nth-child(3), .repo-row > :nth-child(4), .repo-row > :nth-child(5) { display: none; }
+      .toolbar .icon-btn:nth-child(2) { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="masthead">
+      <div>
+        <p class="eyebrow">Fossight / Window Reference</p>
+        <h1>UI Design Sheet</h1>
+        <p class="lead">管理UIの画面骨格・密度・情報階層・一覧設計を確認する静的ウインドウリファレンス。実装時はこの画面を基準に部品を組み立てる。</p>
+      </div>
+      <div class="stamp">SHEET v1.0 · 2026-09-09</div>
+    </header>
+
+    <section class="meta-strip" aria-label="Window specifications">
+      <div class="meta"><small>Desktop ratio</small><strong>16 : 10</strong></div>
+      <div class="meta"><small>Grid</small><strong>26 px</strong></div>
+      <div class="meta"><small>Sidebar</small><strong>220 px</strong></div>
+      <div class="meta"><small>Title bar</small><strong>42 px</strong></div>
+      <div class="meta"><small>Toolbar</small><strong>54 px</strong></div>
+      <div class="meta"><small>Row height</small><strong>52 px</strong></div>
+    </section>
+
+    <section class="window-frame" aria-label="Fossight management window mockup">
+      <div class="titlebar">
+        <div class="title-left"><span class="app-mark">F</span><span>Fossight</span></div>
+        <div class="window-controls" aria-hidden="true"><span></span><span></span><span></span></div>
+      </div>
+
+      <div class="toolbar">
+        <button class="icon-btn filled" aria-label="Back">‹</button>
+        <button class="icon-btn" aria-label="Refresh">↻</button>
+        <div class="search">⌕ <span>Search repositories, tools, relation…</span></div>
+        <div class="toolbar-spacer"></div>
+        <button class="icon-btn" aria-label="Settings">⚙</button>
+        <button class="check-btn">Check updates</button>
+      </div>
+
+      <div class="workspace">
+        <aside class="sidebar">
+          <div class="side-label">Registry</div>
+          <div class="nav-item active"><span class="nav-icon">▦</span>All OSS <span class="nav-count">45</span></div>
+          <div class="nav-item"><span class="nav-icon">↑</span>Updates <span class="nav-count">6</span></div>
+          <div class="nav-item"><span class="nav-icon">!</span>Errors <span class="nav-count">0</span></div>
+          <div class="nav-item"><span class="nav-icon">○</span>Disabled <span class="nav-count">4</span></div>
+          <div class="side-rule"></div>
+          <div class="side-label">Relation</div>
+          <div class="nav-item"><span class="nav-icon">◇</span>Direct</div>
+          <div class="nav-item"><span class="nav-icon">⑂</span>Fork</div>
+          <div class="nav-item"><span class="nav-icon">↗</span>Reference</div>
+          <div class="side-rule"></div>
+          <div class="side-label">Utilities</div>
+          <div class="nav-item"><span class="nav-icon">⌕</span>Discover</div>
+          <div class="nav-item"><span class="nav-icon">≡</span>Activity</div>
+        </aside>
+
+        <section class="content">
+          <header class="content-head">
+            <div><h2>All OSS</h2><p>Mechanically discovered repositories. Disable items that should not be monitored.</p></div>
+            <div class="head-actions"><button class="btn">Discover</button><button class="btn primary">＋ Add OSS</button></div>
+          </header>
+
+          <div class="summary">
+            <div class="metric"><strong>45</strong><span>Registered</span></div>
+            <div class="metric"><strong>41</strong><span>Enabled</span></div>
+            <div class="metric"><strong>6</strong><span>Updates</span></div>
+            <div class="metric"><strong>53</strong><span>Usages</span></div>
+          </div>
+
+          <div class="registry">
+            <div class="registry-head"><span>On</span><span>Repository</span><span>Relation</span><span>Tracking</span><span>Current</span><span>Status</span><span></span></div>
+            <div class="repo-list">
+              <div class="repo-row selected"><span class="toggle on"></span><div><div class="repo-name">microsoft/UFO</div><div class="repo-sub">UFO · C:\…\github\UFO</div></div><span class="type">Direct</span><span class="track">Release</span><span class="version">v3.0.8</span><span class="status ok">Latest</span><button class="more">⋯</button></div>
+              <div class="repo-row"><span class="toggle on"></span><div><div class="repo-name">oraios/serena</div><div class="repo-sub">serena · C:\…\github\serena</div></div><span class="type">Direct</span><span class="track">Branch main</span><span class="version">701e7c843f46</span><span class="status update">Update</span><button class="more">⋯</button></div>
+              <div class="repo-row"><span class="toggle on"></span><div><div class="repo-name">Waishnav/devspace</div><div class="repo-sub">5 usages · includes workbridge fork</div></div><span class="type">Fork / Direct</span><span class="track">Release</span><span class="version">v1.1.0</span><span class="status update">Update</span><button class="more">⋯</button></div>
+              <div class="repo-row"><span class="toggle"></span><div><div class="repo-name">ChromeDevTools/chrome-devtools-mcp</div><div class="repo-sub">chrome-devtools-mcp · retained as candidate</div></div><span class="type">Direct</span><span class="track">Release</span><span class="version">—</span><span class="status off">Disabled</span><button class="more">⋯</button></div>
+              <div class="repo-row"><span class="toggle on"></span><div><div class="repo-name">getsops/sops</div><div class="repo-sub">sops · C:\…\github\sops</div></div><span class="type">Direct</span><span class="track">Tag</span><span class="version">v3.13.3</span><span class="status ok">Latest</span><button class="more">⋯</button></div>
+              <div class="repo-row"><span class="toggle on"></span><div><div class="repo-name">vibheksoni/stealth-browser-mcp</div><div class="repo-sub">stealth-browser-mcp · direct</div></div><span class="type">Direct</span><span class="track">Release</span><span class="version">v0.6.4</span><span class="status ok">Latest</span><button class="more">⋯</button></div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <footer class="footer"><span><strong>Registry:</strong> oss-registry.json</span><span><strong>Last check:</strong> 20:18</span><span><strong>Errors:</strong> 0</span><span class="push">Local only · no automatic updates</span></footer>
+    </section>
+
+    <section class="annotation-grid">
+      <div class="annotation">
+        <h3>Window anatomy</h3>
+        <div class="annotation-body">
+          <table class="spec-table">
+            <thead><tr><th>Zone</th><th>Role</th><th>Rule</th></tr></thead>
+            <tbody>
+              <tr><td>Title bar</td><td>Application identity</td><td>42px fixed</td></tr>
+              <tr><td>Toolbar</td><td>Global search / primary action</td><td>54px fixed</td></tr>
+              <tr><td>Sidebar</td><td>Filter and utility navigation</td><td>220px desktop</td></tr>
+              <tr><td>Summary</td><td>At-a-glance status</td><td>4 metrics maximum</td></tr>
+              <tr><td>Registry</td><td>Primary decision surface</td><td>52px rows, toggle first</td></tr>
+              <tr><td>Footer</td><td>Source and execution context</td><td>34px fixed</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="annotation">
+        <h3>Primary workflow</h3>
+        <div class="annotation-body">
+          <div class="flow"><span class="flow-node">Discover</span><span class="flow-arrow">→</span><span class="flow-node">Candidate registry</span><span class="flow-arrow">→</span><span class="flow-node">Enable / disable</span><span class="flow-arrow">→</span><span class="flow-node">Check</span><span class="flow-arrow">→</span><span class="flow-node">Review / Ack</span></div>
+          <p class="note">候補は削除より無効化を優先。機械検出結果を保持しつつ、監視対象だけを人間が選別できる構成にする。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

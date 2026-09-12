@@ -1,0 +1,13 @@
+[package]
+name = "oss-update-watch-desktop"
+version = "1.0.0"
+description = "Thin Tauri desktop shell for Fossight"
+edition = "2021"
+rust-version = "1.98"
+
+[build-dependencies]
+tauri-build = { version = "=2.6.3", features = [] }
+image = { version = "0.25", default-features = false, features = ["png"] }
+
+[dependencies]
+tauri = { version = "=2.11.5", features = [] }

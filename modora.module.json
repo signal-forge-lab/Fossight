@@ -1,0 +1,23 @@
+{
+  "schema": "modora.module/v1",
+  "id": "oss-update-watch",
+  "name": "Fossight",
+  "description": "Catalog locally used OSS, compare local checkouts with upstream, and monitor upstream changes.",
+  "enabled": true,
+  "presentation": {
+    "pinned": false,
+    "order": 140,
+    "icon": {
+      "type": "file",
+      "value": "${MODULE_DIR}/src-tauri/icons/icon.png"
+    }
+  },
+  "capabilities": ["open", "status", "signals"],
+  "adapter": {
+    "protocol": "process-json-v1",
+    "command": "node",
+    "args": ["${MODULE_DIR}/modora-adapter.mjs"],
+    "cwd": "${MODULE_DIR}",
+    "timeoutMs": 5000
+  }
+}

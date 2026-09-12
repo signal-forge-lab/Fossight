@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fossight</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="window-frame" aria-label="Fossight management window">
+      <header class="titlebar">
+        <div class="title-left"><span class="app-mark" aria-hidden="true">F</span><span>Fossight</span></div>
+        <div class="title-right">
+          <span id="prereqChip" class="prereq-chip" role="status" hidden></span>
+          <div class="local-badge">LOCAL</div>
+        </div>
+      </header>
+
+      <div id="prereqBanner" class="prereq-banner" role="alert" hidden>
+        <span id="prereqBannerText"></span>
+        <button id="prereqBannerRetry" class="secondary-btn" type="button">Retry</button>
+      </div>
+
+      <div class="toolbar">
+        <button id="refreshButton" class="icon-btn" type="button" aria-label="Refresh registry">↻</button>
+        <label class="search-wrap">
+          <span aria-hidden="true">⌕</span>
+          <input id="searchInput" type="search" placeholder="Search repositories, tools, relation…" autocomplete="off">
+        </label>
+        <div class="toolbar-spacer"></div>
+        <span id="busyText" class="busy-text" role="status" aria-live="polite"></span>
+        <button id="scannerButton" class="secondary-btn" type="button">Scanner</button>
+        <button id="ackButton" class="secondary-btn" type="button">Acknowledge changes</button>
+        <button id="checkButton" class="check-btn" type="button">Check updates</button>
+      </div>
+
+      <div class="workspace">
+        <aside class="sidebar" aria-label="Registry filters">
+          <div class="side-label">Registry</div>
+          <button class="nav-item active" type="button" data-status="all"><span class="nav-icon">A</span>All OSS <span id="countAll" class="nav-count">0</span></button>
+          <button class="nav-item" type="button" data-status="local_update"><span class="nav-icon">U</span>Local updates <span id="countUpdates" class="nav-count">0</span></button>
+          <button class="nav-item" type="button" data-status="upstream_change"><span class="nav-icon">↑</span>Upstream changes <span id="countUpstream" class="nav-count">0</span></button>
+          <button class="nav-item" type="button" data-status="attention"><span class="nav-icon">△</span>Attention <span id="countAttention" class="nav-count">0</span></button>
+          <button class="nav-item" type="button" data-status="error"><span class="nav-icon">!</span>Errors <span id="countErrors" class="nav-count">0</span></button>
+          <button class="nav-item" type="button" data-status="disabled"><span class="nav-icon">–</span>Disabled <span id="countDisabled" class="nav-count">0</span></button>
+
+          <div class="side-rule"></div>
+          <div class="side-label">Relation</div>
+          <button class="nav-item" type="button" data-relation="direct"><span class="nav-icon">D</span>Direct</button>
+          <button class="nav-item" type="button" data-relation="fork"><span class="nav-icon">F</span>Fork</button>
+          <button class="nav-item" type="button" data-relation="reference"><span class="nav-icon">R</span>Reference</button>
+          <button id="clearRelation" class="nav-item subtle" type="button"><span class="nav-icon">×</span>Clear relation</button>
+        </aside>
+
+        <section class="content">
+          <header class="content-head">
+            <div>
+              <h1 id="viewTitle">All OSS</h1>
+              <p>ローカルcheckoutと現在のupstreamを比較し、upstream側の新規変化も別に監視します。</p>
+            </div>
+          </header>
+
+          <div class="summary" aria-label="Registry summary">
+            <div class="metric"><strong id="metricRegistered">0</strong><span>Registered</span></div>
+            <div class="metric"><strong id="metricUpdates">0</strong><span>Local Updates</span></div>
+            <div class="metric"><strong id="metricUpstream">0</strong><span>Upstream Changes</span></div>
+            <div class="metric"><strong id="metricErrors">0</strong><span>Errors</span></div>
+          </div>
+
+          <div class="registry">
+            <div class="registry-head"><span>On</span><span>Repository</span><span>Relation</span><span>Tracking</span><span>Upstream</span><span>Local</span><span>Change</span></div>
+            <div id="repoList" class="repo-list" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <aside id="detailsPanel" class="details-panel" aria-label="Selected OSS details">
+          <div id="detailsResizeHandle" class="details-resize" role="separator" aria-orientation="vertical" aria-label="Resize details panel" tabindex="0"></div>
+          <div id="detailsEmpty" class="details-empty">
+            <div class="details-empty-mark" aria-hidden="true">i</div>
+            <strong>Select an OSS</strong>
+            <span>一覧の行を選択すると、概要と状態をここに表示します。</span>
+          </div>
+          <div id="detailsContent" class="details-content" hidden>
+            <header class="details-head">
+              <div class="details-title-wrap">
+                <div class="details-eyebrow">OSS Details</div>
+                <h2 id="detailsRepo">—</h2>
+              </div>
+              <button id="detailsClose" class="details-close" type="button" aria-label="Close details">×</button>
+            </header>
+
+            <section class="details-section details-summary-section">
+              <div class="details-label">What it does</div>
+              <p id="detailsSummary" class="details-summary">—</p>
+            </section>
+
+            <section class="details-section">
+              <div class="details-label">Status</div>
+              <div class="details-status-grid">
+                <div class="detail-stat"><span>Local</span><strong id="detailsLocal">—</strong></div>
+                <div class="detail-stat"><span>Upstream</span><strong id="detailsChange">—</strong></div>
+              </div>
+            </section>
+
+            <section class="details-section">
+              <div class="details-label">Repository</div>
+              <dl class="details-list">
+                <div><dt>Homepage</dt><dd><a id="detailsHomeLink" class="details-link" href="#" target="_blank" rel="noopener noreferrer">Open GitHub ↗</a></dd></div>
+                <div><dt>Tracking</dt><dd id="detailsTracking">—</dd></div>
+                <div><dt>Current</dt><dd id="detailsCurrent">—</dd></div>
+                <div><dt>Priority</dt><dd id="detailsPriority">—</dd></div>
+                <div><dt>Enabled</dt><dd><button id="detailsToggle" class="details-toggle" type="button" data-repo="">Enabled</button></dd></div>
+              </dl>
+            </section>
+
+            <section class="details-section details-usages-section">
+              <div class="details-label">Local usage</div>
+              <div id="detailsUsages" class="details-usages"></div>
+            </section>
+          </div>
+        </aside>
+      </div>
+
+      <footer class="footer">
+        <span><strong>Registry:</strong> oss-registry.json</span>
+        <span><strong>Last check:</strong> <span id="lastCheck">Never</span></span>
+        <span><strong>Errors:</strong> <span id="footerErrors">0</span></span>
+        <span class="push">Local only · no automatic updates</span>
+      </footer>
+    </section>
+  </main>
+  <button id="detailsScrim" class="details-scrim" type="button" aria-label="Close details"></button>
+  <div id="summaryTooltip" class="summary-tooltip" role="tooltip" hidden></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <div id="onboardingOverlay" class="onboarding-overlay" hidden>
+    <section class="onboarding-card" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
+      <section id="obStepWelcome" class="ob-step" data-step="welcome">
+        <div class="ob-mark" aria-hidden="true">F</div>
+        <h1 id="onboardingTitle">Fossight</h1>
+        <p class="ob-tagline">Know what OSS you use and when it changes.</p>
+        <p class="ob-hint">Register the local Git repositories you use, watch their upstreams, and review every change before you act. Everything stays local; nothing is updated automatically.</p>
+        <button id="obGetStarted" class="check-btn" type="button">Get started</button>
+      </section>
+
+      <section id="obStepPrereqs" class="ob-step" data-step="prereqs" hidden>
+        <h2>Prerequisites</h2>
+        <div class="ob-prereq-list">
+          <div class="ob-prereq">
+            <span id="obGitState" class="ob-state">Checking…</span>
+            <span id="obGitVersion" class="ob-detail"></span>
+          </div>
+          <div class="ob-prereq">
+            <span id="obAuthState" class="ob-state">Checking…</span>
+            <span id="obAuthNote" class="ob-detail"></span>
+          </div>
+        </div>
+        <p id="obGitRemediation" class="ob-remediation" hidden></p>
+        <div class="ob-actions">
+          <button id="obPrereqRetry" class="secondary-btn" type="button">Retry</button>
+          <button id="obPrereqNext" class="check-btn" type="button">Continue</button>
+        </div>
+      </section>
+
+      <section id="obStepFolders" class="ob-step" data-step="folders" hidden>
+        <h2>Where are your repositories?</h2>
+        <p class="ob-hint">Choose the folders that contain your local Git checkouts. Nothing is added until you review the scan preview.</p>
+        <div id="obRootList" class="ob-root-list"></div>
+        <div class="ob-folder-actions">
+          <button id="obAddFolder" class="secondary-btn" type="button">Add folder…</button>
+          <input id="obManualPath" class="ob-manual-input" type="text" placeholder="…or type a folder path" hidden aria-label="Folder path">
+          <button id="obAddManual" class="secondary-btn" type="button" hidden>Add typed path</button>
+        </div>
+        <div class="ob-actions">
+          <button id="obCloseFolders" class="secondary-btn" type="button">Close</button>
+          <button id="obScanStart" class="check-btn" type="button" disabled>Scan repositories</button>
+        </div>
+      </section>
+
+      <section id="obStepScanning" class="ob-step" data-step="scanning" hidden>
+        <h2>Scanning repositories…</h2>
+        <p id="obScanProgress" class="ob-progress" role="status" aria-live="polite">Preparing scan…</p>
+        <button id="obScanCancel" class="secondary-btn" type="button">Cancel scan</button>
+      </section>
+
+      <section id="obStepPreview" class="ob-step" data-step="preview" hidden>
+        <h2>Scan preview</h2>
+        <p id="obPreviewCounts" class="ob-hint"></p>
+        <div id="obPreviewList" class="ob-preview-list"></div>
+        <div class="ob-actions">
+          <button id="obPreviewBack" class="secondary-btn" type="button">Back</button>
+          <button id="obApplySelected" class="check-btn" type="button" disabled>Add selected (0)</button>
+        </div>
+      </section>
+
+      <section id="obStepDone" class="ob-step" data-step="done" hidden>
+        <h2>You're set</h2>
+        <p id="obDoneMessage" class="ob-hint">Repositories added. Run your first update check from the main window.</p>
+        <button id="obFinish" class="check-btn" type="button">Open Fossight</button>
+      </section>
+    </section>
+  </div>
+
+  <script src="/app.js" defer></script>
+</body>
+</html>

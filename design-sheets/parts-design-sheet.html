@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fossight — Parts Design Sheet</title>
+  <style>
+    :root {
+      --bg: #edf0f6;
+      --surface: #ffffff;
+      --surface-2: #f7f8fb;
+      --surface-3: #eef1f7;
+      --ink: #232839;
+      --muted: #6f788b;
+      --border: #d7ddeb;
+      --border-strong: #b9c3d6;
+      --accent: #4f63e0;
+      --accent-soft: #e9edff;
+      --success: #23845c;
+      --success-soft: #e8f6ef;
+      --warning: #9a6a12;
+      --warning-soft: #fff3d6;
+      --danger: #bd3b4b;
+      --danger-soft: #fdebed;
+      --running: #4775d1;
+      --running-soft: #e8f0ff;
+      --shadow: 0 18px 50px rgba(45, 55, 88, .08);
+      --r-sm: 8px;
+      --r-md: 12px;
+      --r-lg: 16px;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-6: 24px;
+      --space-8: 32px;
+    }
+
+    * { box-sizing: border-box; }
+    html { color-scheme: light; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(79, 99, 224, .025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79, 99, 224, .025) 1px, transparent 1px),
+        var(--bg);
+      background-size: 26px 26px;
+      font-family: "Segoe UI", "Yu Gothic UI", system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    button, input, select { font: inherit; color: inherit; }
+    button, input, select, .toggle { outline: none; }
+    :focus-visible { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
+
+    .page { max-width: 1440px; margin: 0 auto; padding: 36px 32px 64px; }
+    .masthead {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+    .eyebrow {
+      margin: 0 0 4px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    h1 { margin: 0; font-size: clamp(30px, 4vw, 50px); line-height: 1; letter-spacing: -.035em; }
+    .lead { margin: 10px 0 0; max-width: 760px; color: var(--muted); }
+    .stamp {
+      flex: 0 0 auto;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      background: rgba(255,255,255,.72);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tokens {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(90px, 1fr));
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .swatch {
+      min-height: 92px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .swatch-color { height: 34px; border-radius: 8px; border: 1px solid rgba(0,0,0,.06); }
+    .swatch strong { font-size: 12px; }
+    .swatch code { color: var(--muted); font: 11px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace; }
+
+    .sheet-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      background: rgba(255,255,255,.92);
+      box-shadow: var(--shadow);
+      overflow: clip;
+    }
+    .panel.wide { grid-column: 1 / -1; }
+    .panel-head {
+      min-height: 54px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface-2);
+    }
+    .panel-head h2 { margin: 0; font-size: 14px; letter-spacing: .01em; }
+    .panel-head span { color: var(--muted); font-size: 11px; }
+    .panel-body { padding: 18px; }
+    .row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .row + .row { margin-top: 14px; }
+    .spec-label { min-width: 90px; color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+
+    .btn {
+      min-height: 36px;
+      padding: 0 14px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--r-sm);
+      background: var(--surface);
+      font-weight: 700;
+      cursor: default;
+    }
+    .btn:hover { background: var(--surface-2); border-color: #aeb9ce; }
+    .btn.primary { color: #fff; border-color: var(--accent); background: var(--accent); }
+    .btn.primary:hover { background: #4659cc; }
+    .btn.ghost { border-color: transparent; background: transparent; }
+    .btn.danger { color: var(--danger); border-color: #efc5ca; background: var(--danger-soft); }
+    .btn[disabled] { color: #a4abba; background: #f1f3f7; border-color: #e0e4ec; opacity: .8; }
+    .btn.icon { width: 36px; padding: 0; display: inline-grid; place-items: center; font-size: 17px; }
+
+    .field, .select {
+      height: 36px;
+      min-width: 190px;
+      padding: 0 11px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--r-sm);
+      background: var(--surface);
+    }
+    .field::placeholder { color: #9aa3b3; }
+    .field.error { border-color: var(--danger); background: #fffafb; }
+    .search { position: relative; display: inline-flex; align-items: center; }
+    .search::before { content: "⌕"; position: absolute; left: 11px; color: var(--muted); font-size: 17px; pointer-events: none; }
+    .search .field { padding-left: 32px; }
+
+    .toggle { display: inline-flex; align-items: center; gap: 9px; cursor: default; }
+    .toggle-track {
+      width: 38px; height: 22px; padding: 2px;
+      border-radius: 999px; background: #cfd5e1;
+      display: inline-flex; align-items: center;
+    }
+    .toggle-track::after { content: ""; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+    .toggle.on .toggle-track { justify-content: flex-end; background: var(--accent); }
+    .toggle.disabled { opacity: .45; }
+
+    .check { display: inline-flex; align-items: center; gap: 8px; }
+    .check-box { width: 18px; height: 18px; border: 1px solid var(--border-strong); border-radius: 5px; background: #fff; display: grid; place-items: center; }
+    .check.checked .check-box { color: #fff; border-color: var(--accent); background: var(--accent); }
+    .check.checked .check-box::after { content: "✓"; font-size: 12px; font-weight: 900; }
+
+    .badge {
+      min-height: 26px; padding: 3px 9px; border-radius: 999px;
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border); background: var(--surface-2);
+      font-size: 12px; font-weight: 800;
+    }
+    .badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #8992a4; }
+    .badge.ok { color: var(--success); border-color: #c6ead8; background: var(--success-soft); }
+    .badge.ok::before { background: var(--success); }
+    .badge.run { color: var(--running); border-color: #c9d8f8; background: var(--running-soft); }
+    .badge.run::before { background: var(--running); }
+    .badge.warn { color: var(--warning); border-color: #ecd9a5; background: var(--warning-soft); }
+    .badge.warn::before { background: #d49a31; }
+    .badge.fail { color: var(--danger); border-color: #efc5ca; background: var(--danger-soft); }
+    .badge.fail::before { background: var(--danger); }
+
+    .tabs { display: inline-flex; min-height: 36px; padding: 3px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-3); }
+    .tab { min-width: 78px; padding: 0 12px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); font-weight: 700; }
+    .tab.active { color: var(--ink); background: #fff; box-shadow: 0 1px 4px rgba(40,49,80,.08); }
+
+    .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .metric { padding: 14px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-2); }
+    .metric strong { display: block; font-size: 28px; line-height: 1.1; letter-spacing: -.03em; }
+    .metric span { color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+
+    .list { border: 1px solid var(--border); border-radius: var(--r-md); overflow: clip; }
+    .list-row { min-height: 46px; padding: 9px 12px; display: grid; grid-template-columns: 28px 1.3fr .8fr auto; gap: 12px; align-items: center; background: #fff; }
+    .list-row + .list-row { border-top: 1px solid var(--border); }
+    .list-row.selected { background: #f2f4ff; box-shadow: inset 3px 0 var(--accent); }
+    .repo-icon { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; background: var(--surface-3); color: var(--muted); font-weight: 900; }
+    .repo-name { font-weight: 800; }
+    .repo-sub { color: var(--muted); font-size: 11px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; }
+
+    .empty { min-height: 170px; border: 2px dashed var(--border-strong); border-radius: 14px; background: var(--surface-2); display: grid; place-items: center; text-align: center; padding: 24px; }
+    .empty strong { display: block; margin-bottom: 4px; }
+    .empty p { margin: 0 0 12px; color: var(--muted); font-size: 12px; }
+
+    .dialog-wrap { padding: 20px; border-radius: var(--r-md); background: #e8ebf3; }
+    .dialog { max-width: 420px; margin: 0 auto; padding: 18px; border: 1px solid var(--border); border-radius: 14px; background: #fff; box-shadow: 0 22px 50px rgba(36, 45, 76, .18); }
+    .dialog h3 { margin: 0 0 6px; font-size: 17px; }
+    .dialog p { margin: 0 0 18px; color: var(--muted); }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+    .type-sample { display: grid; grid-template-columns: 120px 1fr; gap: 16px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .type-sample:last-child { border-bottom: 0; }
+    .type-meta { color: var(--muted); font-size: 11px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .t-display { font-size: 32px; font-weight: 800; letter-spacing: -.035em; }
+    .t-title { font-size: 18px; font-weight: 800; }
+    .t-body { font-size: 14px; }
+    .t-caption { font-size: 11px; color: var(--muted); }
+
+    .note {
+      margin-top: 20px; padding: 13px 15px; border: 1px solid #cad3ee; border-radius: var(--r-md);
+      background: #f4f6ff; color: #536078; font-size: 12px;
+    }
+
+    @media (max-width: 980px) {
+      .page { padding: 24px 18px 48px; }
+      .tokens { grid-template-columns: repeat(4, 1fr); }
+      .sheet-grid { grid-template-columns: 1fr; }
+      .panel.wide { grid-column: auto; }
+      .metric-grid { grid-template-columns: repeat(2, 1fr); }
+      .list-row { grid-template-columns: 28px 1fr auto; }
+      .list-row .mono { display: none; }
+    }
+    @media (max-width: 560px) {
+      .masthead { align-items: start; flex-direction: column; }
+      .tokens { grid-template-columns: repeat(2, 1fr); }
+      .metric-grid { grid-template-columns: 1fr 1fr; }
+      .spec-label { width: 100%; min-width: 100%; }
+      .list-row { grid-template-columns: 28px 1fr; }
+      .list-row .badge { grid-column: 2; justify-self: start; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="masthead">
+      <div>
+        <p class="eyebrow">Fossight / Design System</p>
+        <h1>Parts Design Sheet</h1>
+        <p class="lead">Fossight 管理UIの共通パーツ規格。形状・状態・文字階層・状態色を一枚で比較するための静的リファレンス。</p>
+      </div>
+      <div class="stamp">SHEET v1.0 · 2026-09-09</div>
+    </header>
+
+    <section class="tokens" aria-label="Color tokens">
+      <div class="swatch"><div class="swatch-color" style="background:#edf0f6"></div><strong>Background</strong><code>#edf0f6</code></div>
+      <div class="swatch"><div class="swatch-color" style="background:#ffffff"></div><strong>Surface</strong><code>#ffffff</code></div>
+      <div class="swatch"><div class="swatch-color" style="background:#232839"></div><strong>Text</strong><code>#232839</code></div>
+      <div class="swatch"><div class="swatch-color" style="background:#6f788b"></div><strong>Muted</strong><code>#6f788b</code></div>
+      <div class="swatch"><div class="swatch-color" style="background:#4f63e0"></div><strong>Accent</strong><code>#4f63e0</code></div>
+      <div class="swatch"><div class="swatch-color" style="background:#23845c"></div><strong>Success</strong><code>#23845c</code></div>
+      <div class="swatch"><div class="swatch-color" style="background:#d49a31"></div><strong>Warning</strong><code>#d49a31</code></div>
+      <div class="swatch"><div class="swatch-color" style="background:#bd3b4b"></div><strong>Error</strong><code>#bd3b4b</code></div>
+    </section>
+
+    <div class="sheet-grid">
+      <section class="panel">
+        <div class="panel-head"><h2>Buttons</h2><span>36px / 8px radius</span></div>
+        <div class="panel-body">
+          <div class="row"><span class="spec-label">Default</span><button class="btn">Review</button><button class="btn primary">Check updates</button><button class="btn ghost">Cancel</button><button class="btn danger">Remove</button></div>
+          <div class="row"><span class="spec-label">Icon</span><button class="btn icon" aria-label="Refresh">↻</button><button class="btn icon" aria-label="More options">⋯</button><button class="btn" disabled>Disabled</button></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Inputs</h2><span>36px height</span></div>
+        <div class="panel-body">
+          <div class="row"><span class="spec-label">Input</span><input class="field" value="microsoft/UFO" aria-label="Repository"></div>
+          <div class="row"><span class="spec-label">Search</span><label class="search"><input class="field" placeholder="Search OSS…" aria-label="Search OSS"></label></div>
+          <div class="row"><span class="spec-label">Select</span><select class="select" aria-label="Tracking mode"><option>Latest release</option><option>Latest tag</option><option>Branch HEAD</option></select></div>
+          <div class="row"><span class="spec-label">Error</span><input class="field error" value="invalid/repo/url" aria-invalid="true"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Selection controls</h2><span>state must be readable without color</span></div>
+        <div class="panel-body">
+          <div class="row"><span class="spec-label">Toggle</span><span class="toggle on"><span class="toggle-track"></span><strong>Monitoring on</strong></span><span class="toggle"><span class="toggle-track"></span><span>Monitoring off</span></span></div>
+          <div class="row"><span class="spec-label">Checkbox</span><span class="check checked"><span class="check-box"></span>Selected</span><span class="check"><span class="check-box"></span>Not selected</span></div>
+          <div class="row"><span class="spec-label">Disabled</span><span class="toggle disabled"><span class="toggle-track"></span><span>Unavailable</span></span></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Status badges</h2><span>text + dot</span></div>
+        <div class="panel-body">
+          <div class="row"><span class="badge ok">Latest</span><span class="badge run">Checking</span><span class="badge warn">Update available</span><span class="badge fail">Error</span><span class="badge">Disabled</span></div>
+          <div class="row"><span class="badge">Direct</span><span class="badge">Fork</span><span class="badge">Reference</span></div>
+        </div>
+      </section>
+
+      <section class="panel wide">
+        <div class="panel-head"><h2>Tabs & metrics</h2><span>compact dashboard primitives</span></div>
+        <div class="panel-body">
+          <div class="row" style="justify-content:space-between; margin-bottom:16px">
+            <div class="tabs" role="tablist" aria-label="Example tabs"><button class="tab active">All</button><button class="tab">Updates</button><button class="tab">Errors</button><button class="tab">Disabled</button></div>
+          </div>
+          <div class="metric-grid">
+            <div class="metric"><strong>45</strong><span>Registered OSS</span></div>
+            <div class="metric"><strong>53</strong><span>Local usages</span></div>
+            <div class="metric"><strong>6</strong><span>Updates</span></div>
+            <div class="metric"><strong>0</strong><span>Errors</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel wide">
+        <div class="panel-head"><h2>Registry rows</h2><span>46px minimum row</span></div>
+        <div class="panel-body">
+          <div class="list">
+            <div class="list-row selected"><div class="repo-icon">U</div><div><div class="repo-name">microsoft/UFO</div><div class="repo-sub">UFO · direct</div></div><div class="mono">release · v3.0.8</div><span class="badge ok">Latest</span></div>
+            <div class="list-row"><div class="repo-icon">S</div><div><div class="repo-name">oraios/serena</div><div class="repo-sub">serena · direct</div></div><div class="mono">branch · main</div><span class="badge warn">Update available</span></div>
+            <div class="list-row"><div class="repo-icon">D</div><div><div class="repo-name">Waishnav/devspace</div><div class="repo-sub">5 linked usages · fork/direct</div></div><div class="mono">release</div><span class="badge">Disabled</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Empty state</h2><span>cause + next action</span></div>
+        <div class="panel-body">
+          <div class="empty"><div><strong>No updates found</strong><p>All enabled repositories match the latest acknowledged upstream state.</p><button class="btn primary">Run check</button></div></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Dialog</h2><span>clear primary / secondary action</span></div>
+        <div class="panel-body">
+          <div class="dialog-wrap"><div class="dialog"><h3>Disable monitoring?</h3><p>This keeps the OSS in the registry but excludes it from update checks.</p><div class="dialog-actions"><button class="btn">Cancel</button><button class="btn primary">Disable</button></div></div></div>
+        </div>
+      </section>
+
+      <section class="panel wide">
+        <div class="panel-head"><h2>Typography</h2><span>Segoe UI / Yu Gothic UI / system</span></div>
+        <div class="panel-body">
+          <div class="type-sample"><div class="type-meta">32px / 800</div><div class="t-display">Fossight</div></div>
+          <div class="type-sample"><div class="type-meta">18px / 800</div><div class="t-title">Repository monitoring</div></div>
+          <div class="type-sample"><div class="type-meta">14px / 400</div><div class="t-body">Track upstream release, tag, or branch changes without automatically updating local repositories.</div></div>
+          <div class="type-sample"><div class="type-meta">11px / 400</div><div class="t-caption">Last checked 20:18 · 45 repositories · 53 usages</div></div>
+        </div>
+      </section>
+    </div>
+
+    <p class="note"><strong>Interaction rule:</strong> hover / active / focus / disabled でレイアウト寸法を変えない。状態は色だけに依存せず、ラベル・記号・位置のいずれかを必ず併用する。</p>
+  </main>
+</body>
+</html>

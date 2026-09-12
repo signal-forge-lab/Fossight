@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "items": [
+    {
+      "repo": "microsoft/UFO",
+      "enabled": true,
+      "tracking": { "mode": "auto" },
+      "priority": "normal",
+      "usages": [
+        { "project": "example-project", "relation": "direct", "local_path": "D:\\GitHub\\UFO" }
+      ]
+    },
+    {
+      "repo": "example/forked-tool",
+      "enabled": true,
+      "tracking": { "mode": "release" },
+      "priority": "low",
+      "usages": [
+        { "project": "example-fork", "relation": "fork", "local_path": "D:\\GitHub\\forked-tool" }
+      ]
+    }
+  ]
+}

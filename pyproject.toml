@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "oss-update-watch"
+version = "1.0.0"
+description = "Fossight: local OSS registry, status catalog, and upstream update watcher."
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+oss-watch = "oss_update_watch.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+oss_update_watch = ["ui/*.html", "ui/*.css", "ui/*.js"]
