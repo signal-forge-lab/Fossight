@@ -1,93 +1,97 @@
 # Fossight 1.0 User Guide
 
-## 1. Fossightとは
+**English** | [Japanese](FOSSIGHT_USER_GUIDE.ja.md)
 
-Fossight（フォサイト）は、Windows上のローカルGit repositoryを見つけ、対応するGitHub upstreamを台帳化して、ローカルcheckoutとupstreamの状態を確認するツールです。
+## 1. What Fossight does
 
-Fossightはrepositoryを自動更新・merge・pushしません。ScanとCheckは観測、ApplyとAcknowledgeはユーザーが明示して行う操作です。
+Fossight finds local Git repositories on Windows, resolves their GitHub upstreams, registers the OSS you use, and shows both local checkout status and upstream changes.
 
-## 2. インストール
+Fossight does not automatically pull, merge, reset, or push repositories. Scanning and checking are observational; registry changes and acknowledgements happen only through explicit user actions.
 
-1. `Fossight_1.0.0_x64-setup.exe` を実行します。
-2. current-user installなので通常は管理者権限を必要としません。
-3. 起動後、初回Setupを進めます。
+## 2. Installation
 
-Fossight本体は `%LOCALAPPDATA%\Fossight`、ユーザーデータは `%LOCALAPPDATA%\FossightData` に保存されます。
+1. Run `Fossight_1.0.0_x64-setup.exe`.
+2. The current-user installer normally does not require administrator privileges.
+3. Launch Fossight and complete first-run setup.
 
-### 必要なもの
+Application files are installed under `%LOCALAPPDATA%\Fossight`. Mutable user data is stored separately under `%LOCALAPPDATA%\FossightData`.
+
+### Runtime requirements
 
 - Windows 11 x64
-- WebView2 Runtime（通常のWindows 11環境に含まれます）
+- WebView2 Runtime
 - Git for Windows
 
-Python、Node.js、Rust、Cargo、Fossightのsource checkoutは不要です。
+Python, Node.js, Rust, Cargo, and a Fossight source checkout are not required.
 
-Gitが見つからない場合、FossightはクラッシュせずPrerequisitesに導入案内を表示します。
+If Git is missing, Fossight shows an actionable prerequisite message rather than failing to launch.
 
-## 3. 初回Setup
+## 3. First-run setup
 
-1. `Get started` を押します。
-2. PrerequisitesでGitとGitHub auth状態を確認します。
-3. repositoryを置いているフォルダを追加します。
-4. rootごとにQuick Scan / Deep Scanを選択します。
-5. `Scan repositories` を実行します。
-6. Previewで候補を確認し、登録したい項目だけチェックします。
-7. `Add selected` を押します。
+1. Click **Get started**.
+2. Review Git and GitHub authentication status under **Prerequisites**.
+3. Add one or more folders containing your local Git repositories.
+4. Choose **Quick Scan** or **Deep Scan** for each root.
+5. Click **Scan repositories**.
+6. Review the preview and keep only the candidates you want to register selected.
+7. Click **Add selected**.
 
-Previewまではregistryを変更しません。
+The registry is not changed during preview.
 
 ## 4. Scanner
 
 ### Quick Scan
 
-指定したフォルダ自身がGit repositoryならその1件を確認します。そうでなければ直下のフォルダだけを確認します。通常はこちらを推奨します。
+If the selected root is itself a Git repository, Fossight inspects that repository. Otherwise it checks direct child directories only. This is the recommended default for most repository folders.
 
 ### Deep Scan
 
-指定root以下を再帰探索します。最大depthを持ち、`.workbridge`, `node_modules`, `.venv`, `venv`, `target`, `dist`, `build`, `vendor` 等を既定で除外します。symlink/junctionを追跡しないため循環探索しません。
+Deep Scan recursively searches below the selected root with a bounded maximum depth. Default exclusions include `.workbridge`, `node_modules`, `.venv`, `venv`, `target`, `dist`, `build`, and `vendor`. Symlinks and junctions are not followed.
 
-### remote判定
+Deep Scan reports progress and can be cancelled.
 
-- 有効なGitHub `upstream` がある: upstreamを監視対象、relation=`fork`
-- upstreamがなく有効なGitHub `origin` がある: originを監視対象、relation=`direct`
-- GitHub remoteがない: Previewでskip理由を表示
+### Remote resolution
 
-同じ`owner/repo`は1 OSSへ統合され、複数checkoutは`usages`として保持されます。
+- Valid GitHub `upstream` remote -> monitor upstream, `relation=\"fork\"`
+- No valid upstream, but valid GitHub `origin` -> monitor origin, `relation=\"direct\"`
+- No supported GitHub remote -> show a skip reason in preview
 
-## 5. Main画面
+The same `owner/repo` is stored once. Multiple local checkouts are represented as `usages`.
 
-- **Local Updates**: local checkoutが現在のupstream commitよりbehindしているもの
-- **Upstream Changes**: baseline以降にupstream側の監視値が変化したもの
-- **Attention**: Ahead / Divergedなどレビューが必要なlocal状態
-- **Errors**: Git/GitHub取得に失敗したもの
-- **Disabled**: 台帳には残すがCheck対象外にしたもの
+## 5. Main window
 
-行を選択するとOSS Detailsを表示します。Detailsには説明、Local/Upstream状態、tracking、current値、priority、local usage、GitHub homepage linkが表示されます。
+- **Local Updates** — local checkouts behind the currently tracked upstream commit
+- **Upstream Changes** — upstream values changed since the monitoring baseline
+- **Attention** — states such as `Ahead` or `Diverged` that need review
+- **Errors** — Git or GitHub inspection failures
+- **Disabled** — registered entries excluded from upstream checks
 
-## 6. Check UpdatesとAcknowledge
+Select a row to open **OSS Details**. Details include the description, local/upstream status, tracking mode, current value, priority, local usages, and a GitHub homepage link.
 
-`Check updates` はupstreamを観測し、local checkoutとの差を計算します。初回成功時は現在値をbaselineとして保存します。
+## 6. Check Updates and Acknowledge
 
-その後upstreamが変化すると`Upstream Changes`に残ります。確認後に`Acknowledge changes`を押すと、その値を確認済みbaselineとして保存します。
+**Check updates** observes upstream state and compares registered local checkouts with the tracked upstream commit. The first successful upstream observation becomes the baseline automatically.
+
+If upstream changes later, the entry remains under **Upstream Changes** until you review it and use **Acknowledge changes**.
 
 ## 7. Enable / Disable
 
-Detailsまたは一覧からOSSをDisableできます。Disableしてもregistryから削除されず、upstream Checkだけから除外されます。再度Enableできます。
+An OSS entry can be disabled from the list or Details pane. A disabled entry stays in the registry but is excluded from upstream checks. It can be enabled again at any time.
 
-## 8. GitHub認証
+## 8. GitHub authentication
 
-公開repositoryはanonymousでも利用できますが、GitHub API rate limitは小さくなります。Fossightは次の順で利用可能な認証を検出します。
+Anonymous access works for public repositories but has a lower API rate limit. Fossight detects authentication in this order:
 
 1. `GITHUB_TOKEN`
 2. `GH_TOKEN`
 3. GitHub CLI (`gh auth token`)
 4. anonymous
 
-UIには認証**方法**だけを表示し、token値は表示・保存しません。
+The UI exposes only the authentication method/state. Fossight does not display or persist token values.
 
-## 9. データと再起動
+## 9. User data and restart persistence
 
-Windowsの既定データ先:
+Default Windows data location:
 
 ```text
 %LOCALAPPDATA%\FossightData\
@@ -99,40 +103,40 @@ Windowsの既定データ先:
   logs\
 ```
 
-再起動してもscan roots、registry、Enable/Disable、baseline/stateは保持されます。
+Scan roots, registry contents, enable/disable state, and monitoring baselines persist across restarts.
 
-## 10. アンインストール
+## 10. Uninstallation
 
-アプリ本体は `%LOCALAPPDATA%\Fossight` から削除されます。ユーザーデータ `%LOCALAPPDATA%\FossightData` は意図的に保持します。再インストール時に以前の台帳を継続利用できます。
+Uninstalling Fossight removes application files from `%LOCALAPPDATA%\Fossight` but intentionally preserves `%LOCALAPPDATA%\FossightData` so a later reinstall can continue using the same registry.
 
-完全にデータも消す場合は、Fossightをアンインストールした後にユーザー自身で `%LOCALAPPDATA%\FossightData` を削除してください。
+To remove all Fossight data, uninstall the application first and then manually delete `%LOCALAPPDATA%\FossightData`.
 
 ## 11. Troubleshooting
 
 ### Git missing
 
-Git for Windowsをインストールし、FossightのPrerequisitesで`Retry`します。
+Install Git for Windows and use **Retry** on the Prerequisites screen.
 
-### GitHub rate limit / HTTP error
+### GitHub rate limit / HTTP errors
 
-ネットワークを確認し、必要ならGitHub CLIでloginするか`GITHUB_TOKEN` / `GH_TOKEN`を実行環境へ設定します。
+Check network access. If needed, sign in with GitHub CLI or provide `GITHUB_TOKEN` / `GH_TOKEN` through the process environment.
 
-### repositoryが見つからない
+### A repository is not found
 
-Quick Scanは直下のみです。repositoryが深い階層にある場合はDeep Scanへ切り替えるか、より近いrootを追加します。
+Quick Scan checks direct children only. Use Deep Scan or add a root closer to the repository.
 
-### unknown repositoryの説明がない
+### No description for an unknown repository
 
-Fossightはcurated summaryがない場合、GitHub description、READMEの最初の有用な段落、最後に`No description available yet.`の順でfallbackします。取得済みmetadataはcacheされ、offline時はstale cacheを利用できます。
+For repositories outside the curated catalog, Fossight falls back to GitHub description, then the first useful README paragraph, then `No description available yet.` Retrieved metadata is cached and stale cache can be shown offline.
 
-### Fossightが起動しない
+### Fossight does not launch
 
-配布版はsystem Pythonを必要としません。再インストールしても改善しない場合は、WebView2 RuntimeとWindows Event Viewer、Fossightの`logs`ディレクトリを確認してください。
+The distributed build does not require system Python. If reinstalling does not help, verify WebView2 Runtime, Windows Event Viewer, and the Fossight `logs` directory.
 
 ## 12. Known limitations
 
-- Windows x64配布のみ
-- GitHub repositoryを主対象とする
-- 自動update/merge機能なし
-- package/SBOM/CVE/license scannerではない
-- installerは1.0.0時点でcode signingなし
+- Windows x64 distribution only
+- Primarily GitHub-focused repository discovery and monitoring
+- No automatic repository update/merge
+- Not a package dependency, SBOM, CVE, or license scanner
+- The 1.0.0 installer is unsigned unless a separate signing step is provided

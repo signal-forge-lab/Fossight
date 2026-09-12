@@ -1,5 +1,7 @@
 # Fossight 1.0.0 Release Readiness Review
 
+**English** | [Japanese](FOSSIGHT_RELEASE_READINESS_1.0.0.ja.md)
+
 Date: 2026-09-12
 Release candidate: `Fossight_1.0.0_x64-setup.exe`
 SHA-256: `93178aadf40bf9565f26957144f49e2dd8a2ba6e50cbc1b38c6ebafd1551ba43`

@@ -71,7 +71,7 @@ def load_summary_catalog(root: Path) -> dict[str, str]:
     summaries: dict[str, str] = {}
     current_repo: str | None = None
     heading = re.compile(r"^##\s+\d+\.\s+(.+?)\s*$")
-    summary = re.compile(r"^-\s+\*\*概要:\*\*\s*(.+?)\s*$")
+    summary = re.compile(r"^-\s+\*\*(?:Summary|概要):\*\*\s*(.+?)\s*$")
     for line in text.splitlines():
         heading_match = heading.match(line)
         if heading_match:

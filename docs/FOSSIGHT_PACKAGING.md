@@ -1,5 +1,7 @@
 # Fossight Windows Packaging
 
+**English** | [Japanese](FOSSIGHT_PACKAGING.ja.md)
+
 ## Runtime architecture
 
 The Windows distribution uses two executables:

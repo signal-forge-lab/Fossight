@@ -1,41 +1,43 @@
 # Fossight Security and Privacy
 
+**English** | [Japanese](FOSSIGHT_SECURITY_PRIVACY.ja.md)
+
 ## Local-first model
 
-FossightのUI/backendは`127.0.0.1`だけにbindし、LANへ公開しません。registry/state/reports/cacheはWindows user profile内の`%LOCALAPPDATA%\FossightData`へ保存します。
+Fossight's UI/backend binds only to `127.0.0.1` and is not exposed to the LAN. Registry, state, reports, metadata cache, and logs are stored in `%LOCALAPPDATA%\FossightData`.
 
 ## Network access
 
-ネットワーク通信は主にGitHub repository metadata/update確認に使用します。Scanner自体はlocal Git checkoutとremote URLを読み取ります。
+Network requests are primarily used for GitHub repository metadata and update checks. Repository discovery itself inspects local Git checkouts and their configured remote URLs.
 
 ## GitHub credentials
 
-Fossightは`GITHUB_TOKEN`、`GH_TOKEN`、またはGitHub CLIの認証を利用できますが、token値を`config.json`、registry、status API、release artifactへ書き込みません。UIは`anonymous` / `gh_cli` / 環境変数名のようなauth sourceだけを表示します。
+Fossight can use `GITHUB_TOKEN`, `GH_TOKEN`, or GitHub CLI authentication. Token values are not written to `config.json`, the registry, status APIs, logs by design, or release artifacts. The UI reports only the authentication source/state such as `anonymous` or `gh_cli`.
 
 ## Repository mutation policy
 
-ScannerとLocal status比較はworking treeを変更しません。Quick/Deep Scanはremoteを観測するだけで、checkout、merge、pull、push、resetを行いません。registry mutationはPreview後の`Add selected`に限定されます。
+Scanner operations and local status comparisons do not mutate working trees. Quick Scan and Deep Scan inspect repository metadata only; they do not run checkout, merge, pull, push, or reset. Registry mutation happens only after preview when the user selects **Add selected**.
 
 ## API boundary
 
-- bind: `127.0.0.1` only
-- JSON request body size上限あり
-- non-JSON / malformed / oversized requestを拒否
-- CSP / nosniff / no-referrer / no-store系security headerを設定
-- sidecar portはlocalhostの空きportを動的選択
+- bind address: `127.0.0.1` only
+- bounded JSON request body size
+- malformed, oversized, and non-JSON requests are rejected
+- CSP, `nosniff`, no-referrer, and no-store style security headers are applied
+- the packaged backend chooses an available localhost port dynamically
 
 ## Packaged artifacts
 
-Release QAではinstaller、desktop EXE、sidecarをbyte-level scanし、開発者固有pathや代表的なGitHub token prefixが含まれないことを確認します。Rust release buildにはpath remappingを適用し、Cargo registryのbuild-user absolute pathをartifactから除去します。
+Release QA scans the installer, desktop executable, and sidecar at the byte level for developer-specific absolute paths and representative credential markers. Rust release builds use path remapping so build-user Cargo registry paths are not embedded in the shipped desktop executable.
 
 ## User-data retention
 
-アプリ本体のinstall先 `%LOCALAPPDATA%\Fossight` とユーザーデータ `%LOCALAPPDATA%\FossightData` は分離しています。アンインストールではユーザーデータを保持します。完全削除はユーザーが明示して行います。
+Application files under `%LOCALAPPDATA%\Fossight` are separate from mutable data under `%LOCALAPPDATA%\FossightData`. Uninstallation intentionally preserves user data. Full deletion is an explicit user action.
 
 ## Metadata cache
 
-未知OSSのGitHub description/README由来summaryはlocal cacheへ保存されます。offline時は既存cacheを表示できます。LLMサービスへの送信はruntime要件ではありません。
+Descriptions derived from GitHub descriptions or README content are stored in a local metadata cache. Previously cached metadata can be displayed while offline. No LLM service is required at runtime.
 
 ## Code signing
 
-Fossight 1.0.0 release candidateはunsigned installerとして検証されています。署名を行う場合は外部のcode-signing certificate/secretが必要です。証明書や秘密鍵をrepositoryへ保存しないでください。
+The Fossight 1.0.0 distribution candidate was validated as an unsigned installer. Authenticode signing requires an external code-signing certificate/secret and is deliberately not stored in this repository.
