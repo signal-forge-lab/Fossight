@@ -208,6 +208,8 @@ Windows installerを生成する場合:
 
 詳細は `docs/FOSSIGHT_PACKAGING.ja.md` を参照してください。
 
+Gitのbranch運用とPublic / Private分離ルールは `docs/GIT_WORKFLOW.ja.md` を参照してください。
+
 ## Modora
 
 `modora.module.json` と `modora-adapter.mjs` は tool-owned の Modora module 定義です。Modora core 側への専用分岐は不要です。`open` / `status` / `signals` を公開し、Modora から単体デスクトップウィンドウを開けます。

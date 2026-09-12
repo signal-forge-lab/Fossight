@@ -11,10 +11,22 @@ src-tauri/target/
 src-tauri/gen/
 .env
 .env.*
+!.env.example
+!.env.sample
+
+# Secrets / private keys
+secrets/
 *.pem
 *.key
+*.p12
+*.pfx
+
+# Machine-local configuration and workspace state
+local/
+local-config.json
+config.local.json
+*.local.json
 oss-registry.json
-build/
 src-tauri/binaries/*.exe
 
 # Local orchestration / execution evidence (developer-environment specific)

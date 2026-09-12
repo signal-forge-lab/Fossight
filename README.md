@@ -20,6 +20,7 @@ Documentation:
 - [Security and Privacy](docs/FOSSIGHT_SECURITY_PRIVACY.md) / [Japanese](docs/FOSSIGHT_SECURITY_PRIVACY.ja.md)
 - [Packaging and Release](docs/FOSSIGHT_PACKAGING.md) / [Japanese](docs/FOSSIGHT_PACKAGING.ja.md)
 - [1.0.0 Release Notes](docs/FOSSIGHT_RELEASE_1.0.0.md) / [Japanese](docs/FOSSIGHT_RELEASE_1.0.0.ja.md)
+- [Git Workflow](docs/GIT_WORKFLOW.md) / [Japanese](docs/GIT_WORKFLOW.ja.md)
 
 ## Core principles
 
