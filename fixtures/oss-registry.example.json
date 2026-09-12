@@ -7,7 +7,7 @@
       "tracking": { "mode": "auto" },
       "priority": "normal",
       "usages": [
-        { "project": "example-project", "relation": "direct", "local_path": "D:\\GitHub\\UFO" }
+        { "project": "example-project", "relation": "direct", "local_path": "C:\\path\\to\\UFO" }
       ]
     },
     {
@@ -16,7 +16,7 @@
       "tracking": { "mode": "release" },
       "priority": "low",
       "usages": [
-        { "project": "example-fork", "relation": "fork", "local_path": "D:\\GitHub\\forked-tool" }
+        { "project": "example-fork", "relation": "fork", "local_path": "C:\\path\\to\\forked-tool" }
       ]
     }
   ]
