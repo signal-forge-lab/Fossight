@@ -43,13 +43,13 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
   box-shadow: var(--shadow);
   overflow: hidden;
   display: grid;
-  grid-template-rows: 42px 54px 1fr 34px;
+  grid-template-rows: 42px auto 54px minmax(0, 1fr) 34px;
 }
-.titlebar { padding: 0 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: #fbfcfe; }
+.titlebar { grid-row: 1; padding: 0 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: #fbfcfe; }
 .title-left { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 800; }
 .app-mark { width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center; color: #fff; background: var(--accent); font-size: 11px; }
 .local-badge { padding: 3px 7px; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); font-size: 9px; font-weight: 900; letter-spacing: .08em; }
-.toolbar { padding: 0 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); background: #fff; }
+.toolbar { grid-row: 3; padding: 0 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); background: #fff; }
 .icon-btn { width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface-2); color: var(--muted); font-size: 17px; }
 .search-wrap { height: 34px; flex: 1; max-width: 480px; padding: 0 10px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface-2); color: var(--muted); display: flex; align-items: center; gap: 8px; }
 .search-wrap input { width: 100%; border: 0; outline: 0; background: transparent; min-width: 0; }
@@ -59,7 +59,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 .secondary-btn { height: 34px; padding: 0 11px; border: 1px solid var(--border); border-radius: 8px; color: #596276; background: var(--surface-2); font-size: 11px; font-weight: 800; }
 .secondary-btn:disabled { opacity: .45; cursor: default; }
 .check-btn:disabled { opacity: .55; cursor: default; }
-.workspace { min-height: 0; position: relative; overflow: hidden; display: grid; grid-template-columns: 220px minmax(0, 1fr) var(--details-width); }
+.workspace { grid-row: 4; min-height: 0; position: relative; overflow: hidden; display: grid; grid-template-columns: 220px minmax(0, 1fr) var(--details-width); }
 .sidebar { min-width: 0; border-right: 1px solid var(--border); background: var(--surface-2); padding: 13px 10px; }
 .side-label { padding: 7px 10px 5px; color: #8992a4; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
 .nav-item { width: 100%; min-height: 38px; padding: 0 10px; border: 0; display: flex; align-items: center; gap: 9px; border-radius: 9px; color: #596276; background: transparent; font-weight: 700; text-align: left; }
@@ -155,7 +155,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 .details-scrim { display: none; }
 .empty { min-height: 180px; display: grid; place-items: center; padding: 24px; color: var(--muted); text-align: center; }
 .empty strong { display: block; color: var(--ink); margin-bottom: 4px; }
-.footer { padding: 0 14px; display: flex; align-items: center; gap: 18px; border-top: 1px solid var(--border); background: #fbfcfe; color: var(--muted); font-size: 10px; }
+.footer { grid-row: 5; padding: 0 14px; display: flex; align-items: center; gap: 18px; border-top: 1px solid var(--border); background: #fbfcfe; color: var(--muted); font-size: 10px; }
 .footer strong { color: #556075; }
 .footer .push { margin-left: auto; }
 .toast { position: fixed; right: 24px; bottom: 24px; max-width: 420px; padding: 10px 13px; border: 1px solid var(--border); border-radius: 10px; background: #fff; box-shadow: var(--shadow); color: var(--ink); font-size: 12px; opacity: 0; transform: translateY(8px); pointer-events: none; transition: .16s ease; }
@@ -212,7 +212,8 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 .prereq-chip { padding: 3px 8px; border-radius: 999px; font-size: 9px; font-weight: 900; letter-spacing: .06em; border: 1px solid var(--border); color: var(--muted); }
 .prereq-chip.ok { border-color: var(--success); color: var(--success); background: var(--success-soft); }
 .prereq-chip.bad { border-color: var(--danger); color: var(--danger); background: var(--danger-soft); }
-.prereq-banner { display: flex; align-items: center; gap: 10px; padding: 8px 14px; border-bottom: 1px solid var(--border); background: var(--danger-soft); color: var(--danger); font-size: 12px; font-weight: 600; }
+.prereq-banner { grid-row: 2; display: flex; align-items: center; gap: 10px; padding: 8px 14px; border-bottom: 1px solid var(--border); background: var(--danger-soft); color: var(--danger); font-size: 12px; font-weight: 600; }
+.prereq-banner[hidden] { display: none; }
 
 /* ---------------- Onboarding overlay ---------------- */
 

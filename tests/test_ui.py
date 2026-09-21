@@ -13,6 +13,21 @@ from oss_update_watch.ui_server import create_server, load_summary_catalog
 
 
 class UiServerTests(unittest.TestCase):
+    def test_prerequisite_banner_hides_without_collapsing_workspace(self):
+        css = (
+            Path(__file__).parents[1]
+            / "src"
+            / "oss_update_watch"
+            / "ui"
+            / "styles.css"
+        ).read_text(encoding="utf-8")
+        self.assertIn("grid-template-rows: 42px auto 54px minmax(0, 1fr) 34px;", css)
+        self.assertIn(".prereq-banner[hidden] { display: none; }", css)
+        self.assertIn(".prereq-banner { grid-row: 2;", css)
+        self.assertIn(".toolbar { grid-row: 3;", css)
+        self.assertIn(".workspace { grid-row: 4;", css)
+        self.assertIn(".footer { grid-row: 5;", css)
+
     def test_scan_preview_has_select_all_control(self):
         root = Path(__file__).parents[1] / "src" / "oss_update_watch" / "ui"
         html = (root / "index.html").read_text(encoding="utf-8")
