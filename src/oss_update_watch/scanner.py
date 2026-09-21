@@ -99,9 +99,29 @@ def _git_remotes(repo_path: Path) -> dict[str, str]:
 
 
 def is_repository(path: Path) -> bool:
-    """A repository has ``.git`` as either a directory (normal clone) or a
-    file (worktree/submodule-style checkout)."""
-    return (path / GIT_FILE_NAME).exists()
+    """Return whether path has a structurally valid Git worktree marker.
+
+    An empty or stale .git entry must not stop Deep Scan from descending
+    into child repositories.
+    """
+    marker = path / GIT_FILE_NAME
+    if marker.is_dir():
+        return (marker / "HEAD").is_file()
+    if not marker.is_file():
+        return False
+    try:
+        text = marker.read_text(encoding="utf-8", errors="replace").strip()
+    except OSError:
+        return False
+    if not text.lower().startswith("gitdir:"):
+        return False
+    target_text = text.split(":", 1)[1].strip()
+    if not target_text:
+        return False
+    target = Path(target_text)
+    if not target.is_absolute():
+        target = (path / target).resolve()
+    return target.is_dir() and (target / "HEAD").is_file()
 
 
 def inspect_repository(path: Path, registered: set[str] | None = None) -> dict:

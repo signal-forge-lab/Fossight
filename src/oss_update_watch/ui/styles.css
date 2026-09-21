@@ -222,6 +222,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
   background: rgba(35, 40, 57, .38);
   backdrop-filter: blur(2px);
 }
+.onboarding-overlay[hidden] { display: none; }
 .onboarding-card {
   width: min(720px, calc(100vw - 48px));
   max-height: min(86vh, 720px);

@@ -13,6 +13,16 @@ from oss_update_watch.ui_server import create_server, load_summary_catalog
 
 
 class UiServerTests(unittest.TestCase):
+    def test_onboarding_overlay_can_be_hidden(self):
+        css = (
+            Path(__file__).parents[1]
+            / "src"
+            / "oss_update_watch"
+            / "ui"
+            / "styles.css"
+        ).read_text(encoding="utf-8")
+        self.assertIn(".onboarding-overlay[hidden] { display: none; }", css)
+
     @staticmethod
     def _post_json(url, payload):
         request = Request(

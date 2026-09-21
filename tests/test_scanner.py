@@ -127,6 +127,13 @@ class QuickScanTests(ScannerTestBase):
 
 
 class DeepScanTests(ScannerTestBase):
+    def test_deep_scan_ignores_incomplete_root_git_marker_and_descends(self):
+        (self.root / ".git").mkdir()
+        make_repo(self.root / "nested", origin="https://github.com/ex/nested.git")
+        result = deep_scan(self.root, max_depth=2)
+        self.assertEqual(result.repositories_found, 1)
+        self.assertEqual([row["repo"] for row in result.rows], ["ex/nested"])
+
     def test_deep_scan_finds_nested_repositories(self):
         make_repo(self.root / "a" / "b" / "repo", origin="https://github.com/ex/nested.git")
         result = deep_scan(self.root, max_depth=4)
@@ -213,6 +220,9 @@ class PathHandlingTests(ScannerTestBase):
     def test_git_file_checkout_is_accepted(self):
         checkout = self.root / "worktree-style"
         checkout.mkdir()
+        metadata = checkout / "elsewhere"
+        metadata.mkdir()
+        (metadata / "HEAD").write_text("ref: refs/heads/main\n", encoding="utf-8")
         (checkout / ".git").write_text("gitdir: elsewhere\n", encoding="utf-8")
         result = quick_scan(self.root)
         self.assertEqual(len(result.rows), 1)
