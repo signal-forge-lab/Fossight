@@ -8,6 +8,7 @@ const moduleDir = path.dirname(fileURLToPath(import.meta.url));
 const registryPath = path.join(moduleDir, "oss-registry.json");
 const desktopScript = path.join(moduleDir, "desktop.ps1");
 const desktopExe = path.join(moduleDir, "src-tauri", "target", "release", "oss-update-watch-desktop.exe");
+const desktopSidecar = path.join(moduleDir, "src-tauri", "target", "release", "fossight-backend.exe");
 
 function respond(payload) {
   process.stdout.write(JSON.stringify(payload));
@@ -49,16 +50,37 @@ function desktopRunning() {
 
 function spawnDetached(command, args) {
   return new Promise((resolve) => {
+    let settled = false;
+    let stderr = "";
     const child = spawn(command, args, {
       cwd: moduleDir,
       detached: true,
-      stdio: "ignore",
+      stdio: ["ignore", "ignore", "pipe"],
       windowsHide: true,
     });
-    child.once("error", (error) => resolve({ ok: false, message: `Unable to launch desktop app: ${error.message}` }));
+    child.stderr?.setEncoding("utf8");
+    child.stderr?.on("data", (chunk) => {
+      stderr = (stderr + chunk).slice(-4000);
+    });
+    child.once("error", (error) => {
+      if (settled) return;
+      settled = true;
+      resolve({ ok: false, message: `Unable to launch desktop app: ${error.message}` });
+    });
+    child.once("exit", (code, signal) => {
+      if (settled) return;
+      settled = true;
+      const detail = stderr.trim() || (signal ? `signal ${signal}` : `exit code ${code}`);
+      resolve({ ok: false, message: `Fossight exited during startup: ${detail}` });
+    });
     child.once("spawn", () => {
-      child.unref();
-      resolve({ ok: true, message: "Opening Fossight" });
+      setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        child.stderr?.destroy();
+        child.unref();
+        resolve({ ok: true, message: "Opening Fossight" });
+      }, 1200);
     });
   });
 }
@@ -70,7 +92,7 @@ async function openDesktop() {
   if (process.platform !== "win32") {
     return { ok: false, message: "The desktop launcher is currently configured for Windows" };
   }
-  if (fs.existsSync(desktopExe)) {
+  if (fs.existsSync(desktopExe) && fs.existsSync(desktopSidecar)) {
     return spawnDetached(desktopExe, []);
   }
   return spawnDetached("pwsh.exe", ["-NoProfile", "-File", desktopScript]);
@@ -90,7 +112,7 @@ if (input.action === "status") {
     state: running ? "RUNNING" : "READY",
     detail: running
       ? "Desktop window is open"
-      : fs.existsSync(desktopExe)
+      : fs.existsSync(desktopExe) && fs.existsSync(desktopSidecar)
         ? "Desktop shell is built and ready"
         : "Desktop shell will be built on first open",
     updatedAt: new Date().toISOString(),

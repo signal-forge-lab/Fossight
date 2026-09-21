@@ -263,6 +263,12 @@ fn run() -> Result<(), String> {
     #[cfg(not(debug_assertions))]
     let root = PathBuf::new();
     let data_dir = user_data_dir();
+    std::fs::create_dir_all(&data_dir).map_err(|error| {
+        format!(
+            "Unable to create Fossight data directory {}: {error}",
+            data_dir.display()
+        )
+    })?;
 
     let port = free_port()?;
     let mut child = start_backend(&root, &data_dir, port)?;
