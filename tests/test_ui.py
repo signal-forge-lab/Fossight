@@ -13,6 +13,14 @@ from oss_update_watch.ui_server import create_server, load_summary_catalog
 
 
 class UiServerTests(unittest.TestCase):
+    def test_scan_preview_has_select_all_control(self):
+        root = Path(__file__).parents[1] / "src" / "oss_update_watch" / "ui"
+        html = (root / "index.html").read_text(encoding="utf-8")
+        script = (root / "app.js").read_text(encoding="utf-8")
+        self.assertIn('id="obSelectAll"', html)
+        self.assertIn("setAllPreviewSelection", script)
+        self.assertIn('$("obSelectAll").addEventListener("change"', script)
+
     def test_onboarding_overlay_can_be_hidden(self):
         css = (
             Path(__file__).parents[1]

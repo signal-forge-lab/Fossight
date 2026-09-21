@@ -267,6 +267,10 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 .ob-root-remove { width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 8px; background: #fff; color: var(--muted); font-size: 14px; }
 
 .ob-progress { color: var(--muted); font-variant-numeric: tabular-nums; }
+.ob-preview-toolbar { display: flex; align-items: center; justify-content: flex-start; margin: 8px 0 2px; }
+.ob-select-all { display: inline-flex; align-items: center; gap: 7px; color: var(--ink); font-size: 12px; font-weight: 700; cursor: pointer; }
+.ob-select-all input { width: 16px; height: 16px; accent-color: var(--accent); }
+.ob-select-all input:disabled + span { color: var(--muted); cursor: default; }
 
 .ob-preview-list {
   display: grid; gap: 6px; margin: 10px 0 4px;

@@ -685,11 +685,31 @@ function selectedPreviewPaths() {
     .filter(Boolean);
 }
 
+function selectablePreviewBoxes() {
+  return Array.from(document.querySelectorAll(".ob-select:not(:disabled)"));
+}
+
+function setAllPreviewSelection(checked) {
+  selectablePreviewBoxes().forEach((box) => {
+    box.checked = checked;
+    const index = Number(box.dataset.index);
+    if (ob.rows[index]) ob.rows[index].selected = checked;
+  });
+  updateApplyCount();
+}
+
 function updateApplyCount() {
   const count = selectedPreviewPaths().length;
   const button = $("obApplySelected");
   button.disabled = count === 0;
   button.textContent = `Add selected (${count})`;
+
+  const boxes = selectablePreviewBoxes();
+  const selected = boxes.filter((box) => box.checked).length;
+  const selectAll = $("obSelectAll");
+  selectAll.disabled = boxes.length === 0;
+  selectAll.checked = boxes.length > 0 && selected === boxes.length;
+  selectAll.indeterminate = selected > 0 && selected < boxes.length;
 }
 
 async function applySelected() {
@@ -755,7 +775,11 @@ document.addEventListener("change", (event) => {
     persistObRoots();
     return;
   }
-  if (event.target.classList?.contains("ob-select")) updateApplyCount();
+  if (event.target.classList?.contains("ob-select")) {
+    const index = Number(event.target.dataset.index);
+    if (ob.rows[index]) ob.rows[index].selected = event.target.checked;
+    updateApplyCount();
+  }
 });
 
 $("obGetStarted").addEventListener("click", () => { obShow("prereqs"); loadPrereqs(); });
@@ -770,6 +794,7 @@ $("obManualPath").addEventListener("keydown", (event) => {
 $("obScanStart").addEventListener("click", startScan);
 $("obScanCancel").addEventListener("click", cancelScan);
 $("obPreviewBack").addEventListener("click", () => obShow("folders"));
+$("obSelectAll").addEventListener("change", (event) => setAllPreviewSelection(event.target.checked));
 $("obApplySelected").addEventListener("click", applySelected);
 $("obFinish").addEventListener("click", finishOnboarding);
 $("scannerButton").addEventListener("click", () => { loadSettings().then(() => openOnboarding("folders")); });
